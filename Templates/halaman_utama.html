@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bahasa Isyarat BISINDO - Landing Page</title>
+  <style>
+    /* Reset & base */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f9ff; color: #222;
+      line-height: 1.6;
+      scroll-behavior: smooth;
+    }
+    a {
+      color: #0078D7; text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Container */
+    .container {
+      width: 90%; max-width: 1100px;
+      margin: auto;
+      padding: 0 15px;
+    }
+
+    /* Header / Hero */
+    header {
+      background: linear-gradient(135deg, #0078D7 0%, #004e8f 100%);
+      color: #fff;
+      padding: 100px 20px 60px;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 5px rgba(0,0,0,0.3);
+    }
+    header p {
+      font-size: 1.25rem;
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+    .btn-primary {
+      background-color: #ffd700;
+      color: #004e8f;
+      border: none;
+      padding: 18px 40px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.6);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .btn-primary:hover {
+      background-color: #ffeb3b;
+      color: #002b50;
+    }
+
+    /* Features Section */
+    #features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin: 60px 0;
+      gap: 30px;
+    }
+    .feature {
+      flex: 1 1 30%;
+      background: white;
+      border-radius: 15px;
+      padding: 30px 25px;
+      box-shadow: 0 8px 20px rgb(0 0 0 / 0.1);
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    .feature:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 16px 40px rgb(0 0 0 / 0.15);
+    }
+    .feature svg {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 20px;
+      fill: #0078D7;
+    }
+    .feature h3 {
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+    }
+    .feature p {
+      font-size: 1rem;
+      color: #555;
+    }
+
+    /* About Section */
+    #about {
+      background: white;
+      border-radius: 15px;
+      padding: 50px 30px;
+      margin-bottom: 60px;
+      box-shadow: 0 8px 20px rgb(0 0 0 / 0.1);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 40px;
+    }
+    #about img {
+      max-width: 450px;
+      width: 100%;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    #about .text {
+      flex: 1 1 400px;
+    }
+    #about .text h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    #about .text p {
+      font-size: 1.1rem;
+      color: #444;
+      line-height: 1.5;
+    }
+
+    /* Detection Section */
+    #detection {
+      background: white;
+      border-radius: 15px;
+      padding: 40px 30px;
+      box-shadow: 0 8px 20px rgb(0 0 0 / 0.1);
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    #video {
+      width: 320px;
+      height: 240px;
+      border-radius: 12px;
+      background: #000;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      object-fit: cover;
+    }
+    #detected-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0078D7;
+      min-height: 40px;
+      letter-spacing: 0.1em;
+    }
+
+    /* Footer */
+    footer {
+      background: #004e8f;
+      color: white;
+      text-align: center;
+      padding: 15px 10px;
+      font-size: 0.9rem;
+      user-select: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      #features {
+        flex-direction: column;
+        gap: 40px;
+      }
+      #about {
+        flex-direction: column;
+      }
+      #about img {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <h1>Bahasa Isyarat BISINDO</h1>
+      <p>Deteksi huruf bahasa isyarat BISINDO secara real-time menggunakan kamera dan machine learning.</p>
+      <!-- Tombol diarahkan ke halaman deteksi -->
+      <button class="btn-primary" id="start-btn" onclick="window.location.href='{{ url_for('halaman_index') }}'">Mulai Deteksi</button>
+    </div>
+  </header>
+
+  <section class="container" id="features" aria-label="Fitur aplikasi">
+    <article class="feature" tabindex="0">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M32 6a26 26 0 1 0 26 26A26 26 0 0 0 32 6Zm0 48a22 22 0 1 1 22-22 22.025 22.025 0 0 1-22 22Z"/>
+        <path d="M43 24H37v14h-6V24h-6l11-14 11 14h-6z"/>
+      </svg>
+      <h3>Deteksi Real-Time</h3>
+      <p>Gunakan kamera untuk mengenali huruf bahasa isyarat secara langsung tanpa perlu perangkat tambahan.</p>
+    </article>
+    <article class="feature" tabindex="0">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M32 6C17.664 6 6 17.664 6 32s11.664 26 26 26 26-11.664 26-26S46.336 6 32 6Zm0 48a22 22 0 1 1 22-22 22.025 22.025 0 0 1-22 22Z"/>
+        <path d="M26 26h12v12H26z"/>
+      </svg>
+      <h3>Mudah Digunakan</h3>
+      <p>Antarmuka yang sederhana dan intuitif sehingga siapa pun bisa belajar bahasa isyarat dengan mudah.</p>
+    </article>
+    <article class="feature" tabindex="0">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="32" cy="32" r="26" fill="none" stroke="#0078D7" stroke-width="4"/>
+        <path d="M22 42l10-10 6 6" fill="none" stroke="#0078D7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <h3>Akurat dan Cepat</h3>
+      <p>Model machine learning yang terlatih untuk memberikan hasil prediksi dengan akurasi tinggi.</p>
+    </article>
+  </section>
+
+  <section class="container" id="about" aria-label="Tentang aplikasi">
+    <img src="https://cdn-icons-png.flaticon.com/512/3596/3596917.png" alt="Ilustrasi bahasa isyarat" />
+    <div class="text">
+      <h2>Tentang Aplikasi</h2>
+      <p>Aplikasi Bahasa Isyarat BISINDO dirancang untuk membantu pengguna memahami dan belajar bahasa isyarat dengan mudah melalui teknologi kamera dan machine learning modern. Dengan aplikasi ini, Anda dapat mempraktikkan bahasa isyarat secara real-time tanpa alat tambahan.</p>
+    </div>
+  </section>
+
+  <section class="container" id="detection" aria-label="Deteksi bahasa isyarat">
+    <h2>Deteksi Bahasa Isyarat</h2>
+    <video id="video" autoplay muted playsinline></video>
+    <div id="detected-text" aria-live="polite" aria-atomic="true">Tekan "Mulai Deteksi" untuk mengaktifkan kamera</div>
+  </section>
+
+  <footer>
+    &copy; 2025 Bahasa Isyarat BISINDO. All rights reserved.
+  </footer>
+
+</body>
+</html>

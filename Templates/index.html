@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Deteksi Bahasa Isyarat BISINDO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #e0f2f1;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #00695c;
+            color: white;
+            padding: 1em;
+            font-size: 1.5em;
+        }
+        main {
+            padding: 20px;
+        }
+        .video-frame {
+            width: 640px;
+            height: 480px;
+            margin: 20px auto;
+            background: #000;
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        #video {
+            width: 640px;
+            height: 480px;
+            background: black;
+        }
+        #canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 640px;
+            height: 480px;
+            pointer-events: none;
+        }
+        #output {
+            font-size: 2em;
+            color: #00695c;
+            margin-top: 20px;
+        }
+        button {
+            background-color: #26a69a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #00796b;
+        }
+        button:disabled {
+            background-color: #9e9e9e;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <header>Deteksi Bahasa Isyarat BISINDO</header>
+    <main>
+        <div>
+            <!-- Kembali ke route "/" di Flask -->
+            <button onclick="window.location.href='/'">Kembali</button>
+            <button id="startBtn" onclick="mulaiKamera()">Mulai</button>
+            <button id="stopBtn" onclick="berhentiKamera()" disabled>Berhenti</button>
+            <button id="hapusBtn" onclick="hapusKarakter()" disabled>Hapus</button>
+            <button onclick="resetSemua()">Reset</button>
+        </div>
+
+        <div class="video-frame">
+            <video id="video" autoplay muted playsinline></video>
+            <canvas id="canvas" width="640" height="480"></canvas>
+        </div>
+
+        <div id="output">Hasil Prediksi: <span id="hasilKarakter">-</span></div>
+    </main>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const hasilKarakter = document.getElementById('hasilKarakter');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const hapusBtn = document.getElementById('hapusBtn');
+        const ctx = canvas.getContext('2d');
+
+        let stream = null;
+        let deteksiInterval = null;
+
+        function mulaiKamera() {
+            if (stream) {
+                alert("Kamera sudah aktif!");
+                return;
+            }
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(s => {
+                    stream = s;
+                    video.srcObject = stream;
+
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                    hapusBtn.disabled = false;
+
+                    // Set interval untuk mengirim frame ke backend tiap 500 ms
+                    deteksiInterval = setInterval(sendFrame, 500);
+                })
+                .catch(err => {
+                    alert("Gagal mengakses kamera: " + err.message);
+                    console.error("Gagal mengakses kamera", err);
+                });
+        }
+
+        function berhentiKamera() {
+            if (!stream) {
+                alert("Kamera belum aktif!");
+                return;
+            }
+            // Stop semua track webcam
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+            video.srcObject = null;
+
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            hapusBtn.disabled = true;
+
+            // Hentikan pengiriman frame
+            clearInterval(deteksiInterval);
+            deteksiInterval = null;
+
+            // Reset hasil prediksi
+            hasilKarakter.textContent = "-";
+        }
+
+        function hapusKarakter() {
+            const teks = hasilKarakter.textContent;
+            if (teks !== "-" && teks.length > 0) {
+                hasilKarakter.textContent = teks.slice(0, -1);
+            }
+        }
+
+        function resetSemua() {
+            hasilKarakter.textContent = "-";
+        }
+
+        async function sendFrame() {
+            if (!stream) return;
+
+            // Gambar frame video ke canvas
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataURL = canvas.toDataURL('image/jpeg');
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: dataURL })
+                });
+
+                if (!response.ok) {
+                    console.error("Response error:", response.status, await response.text());
+                    return;
+                }
+
+                const result = await response.json();
+                if (result.gesture && result.gesture !== 'No Hand Detected' && result.gesture !== 'Error') {
+                    // Jika hasil bukan "No Hand Detected" atau "Error", append ke teks
+                    if (hasilKarakter.textContent === "-" || hasilKarakter.textContent.length > 30) {
+                        hasilKarakter.textContent = result.gesture;
+                    } else {
+                        hasilKarakter.textContent += result.gesture;
+                    }
+                }
+                // Jika "No Hand Detected" atau "Error", tidak menambahkan ke output—tetap teks sebelumnya
+            } catch (err) {
+                console.error("Error saat memanggil /predict:", err);
+            }
+        }
+    </script>
+</body>
+</html>
